@@ -14,22 +14,22 @@ enum Mode{IMM, ABS, ZERO, IND_ABS, ABSX,
 
 class Mem {
     Reg &reg;
-    size_t size;
     std::vector<word> stack;
     std::vector<char> data;
     std::vector<Peripheral> peripherals;
 public:
-    Mem(size_t size, Reg &reg) : size(size), reg(reg) {
+    Mem(size_t size, Reg &reg) : reg(reg) {
         data.reserve(size);
     };
     word translate(word, Mode);
     word load(word, Mode);
     void store(word, word, Mode);
     void push(word);
-    void stackEmpty() { return stack.size() > 0; }
-    word pop(word);
+    bool stackEmpty() { return stack.size() > 0; }
+    word pop();
     void copyTo(std::string, word);
 private:
     void findPeripheral(word);
 };
+
 #endif

@@ -1,7 +1,7 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-#include <stdint.h>
+#include <string>
 
 // Defaults to a signed version
 union word {

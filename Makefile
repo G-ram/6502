@@ -2,26 +2,27 @@ CXX = clang++
 
 INCLUDES =
 
-CXXFLAGS = -g -Wall $(INCLUDES)
+CXXFLAGS = -std=c++11 -g -Wall $(INCLUDES)
 
 LDFLAGS = -g
 LDLIBS  =
 
 SRC = $(wildcard *.cpp)
-EXECUTABLES = 6502
+TARGET = 6502
 OBJECTS = $(SRC:.cpp=.o)
 HEADERS = $(wildcard *.h)
 
 .PHONY: default
-default: $(EXECUTABLES)
+default: $(TARGET)
 
-$(EXECUTABLES): $(OBJECTS)
+$(TARGET): $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(TARGET) $(OBJECTS) $(LDFLAGS) $(LDLIBS)
 
 $(OBJECTS): $(HEADERS)
 
 .PHONY: clean
 clean:
-	rm -f *~ a.out core $(OBJECTS) $(EXECUTABLES)
+	rm -f *~ a.out core $(OBJECTS) $(TARGET)
 
 .PHONY: all
 all: clean default

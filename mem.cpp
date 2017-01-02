@@ -2,7 +2,7 @@
 #include "mem.h"
 
 // Assumes Little Endian Processor
-word Mem::translate(word addr, Mode mode, Reg &reg) {
+word Mem::translate(word addr, Mode mode) {
     word tmp;
     switch(mode){
         case ABS:
@@ -29,19 +29,24 @@ word Mem::translate(word addr, Mode mode, Reg &reg) {
             tmp.udw = reg.Y.udw;
             break;
         case IDX_IND:
+        {
             word a;
             a.uw = reg.X.uw + addr.uw;
             tmp.upart.lo = load(a, ABS).uw;
             a.uw++;
             tmp.upart.hi = load(a, ABS).uw;
             break;
+        }
         case IND_IDX:
+        {
             word a;
-            a.upart.lo = load(addr.uw, ABS).uw;
+            addr.upart.hi = 0;
+            a.upart.lo = load(addr, ABS).uw;
             addr.uw++;
-            a.upart.hi = load(addr.uw, ABS).uw;
+            a.upart.hi = load(addr, ABS).uw;
             tmp.dw = a.udw + reg.Y.udw;
             break;
+        }
         case REL:
             if(addr.w < 0) {
                 word a;
@@ -60,8 +65,8 @@ word Mem::translate(word addr, Mode mode, Reg &reg) {
 word Mem::load(word addr, Mode mode) {
     word tmp;
     try {
-        word taddr = translate(addr, Mode mode);
-        tmp.uw = data[taddr];
+        word taddr = translate(addr, mode);
+        tmp.uw = data[taddr.udw];
     } catch(std::string ex){
         switch(mode){
             case IMM:
@@ -77,8 +82,8 @@ word Mem::load(word addr, Mode mode) {
 
 void Mem::store(word newData, word addr, Mode mode) {
     try {
-        word taddr = translate(addr, Mode mode);
-        data[taddr] = newData.uw;
+        word taddr = translate(addr, mode);
+        data[taddr.udw] = newData.uw;
         findPeripheral(addr);
     } catch(std::string ex){
         return;
@@ -86,19 +91,21 @@ void Mem::store(word newData, word addr, Mode mode) {
 }
 
 void Mem::push(word newData) {
-    stack.push_back(word);
+    stack.push_back(newData);
 }
 
 word Mem::pop() {
     if(stack.empty())
         throw "stack not balanced";
 
-    return stack.pop_back();
+    word tmp = stack.back();
+    stack.pop_back();
+    return tmp;
 }
 
 void Mem::copyTo(std::string raw, word addr) {
     uint16_t taddr;
-    memcpy(&taddr, addr, sizeof(word));
+    memcpy(&taddr, &addr, sizeof(word));
     memcpy(&data[taddr], raw.c_str(), sizeof(char) * raw.length());
 }
 
