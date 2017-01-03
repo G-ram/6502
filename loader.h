@@ -5,8 +5,6 @@
 #include "reg.h"
 #include "mem.h"
 
-#define MEM_SIZE 0x10000
-
 class Loader {
 private:
     std::string raw;

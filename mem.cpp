@@ -1,6 +1,10 @@
 #include <string>
 #include "mem.h"
+#include "log.h"
 
+std::string modeName[13] = {"IMM", "ABS", "ZERO", "IND_ABS", "ABSX",
+                            "ABSY", "ZEROX", "ZEROY", "IDX_IND",
+                            "IND_IDX", "REL", "ACC", "VOID"};
 // Assumes Little Endian Processor
 word Mem::translate(word addr, Mode mode) {
     word tmp;
@@ -56,6 +60,7 @@ word Mem::translate(word addr, Mode mode) {
             } else {
                 tmp.dw = reg.PC.udw + addr.w;
             }
+            break;
         default:
             throw "Does not need to be translated";
     }
@@ -67,10 +72,11 @@ word Mem::load(word addr, Mode mode) {
     try {
         word taddr = translate(addr, mode);
         tmp.uw = data[taddr.udw];
-    } catch(std::string ex){
+    } catch(char const* ex){
         switch(mode){
             case IMM:
                 tmp.uw = addr.uw;
+                break;
             case ACC:
                 throw ACC;
             default: //VOID and IMPLIED
@@ -85,7 +91,7 @@ void Mem::store(word newData, word addr, Mode mode) {
         word taddr = translate(addr, mode);
         data[taddr.udw] = newData.uw;
         findPeripheral(addr);
-    } catch(std::string ex){
+    } catch(char const *ex){
         return;
     }
 }
@@ -104,7 +110,7 @@ word Mem::pop() {
 }
 
 void Mem::copyTo(std::string raw, word addr) {
-    uint16_t taddr;
+    unsigned short taddr;
     memcpy(&taddr, &addr, sizeof(word));
     memcpy(&data[taddr], raw.c_str(), sizeof(char) * raw.length());
 }

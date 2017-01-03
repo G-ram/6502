@@ -31,4 +31,5 @@ struct Reg {
     }
 };
 
+std::ostream& operator<<(std::ostream& out, const Reg& r);
 #endif
