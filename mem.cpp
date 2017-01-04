@@ -21,21 +21,21 @@ word Mem::translate(word addr, Mode mode) {
             tmp.upart.hi = load(addr, ABS).uw;
             break;
         case ABSX:
-            tmp.udw = addr.udw + reg.X.udw;
+            tmp.udw = addr.udw + reg->X.udw;
             break;
         case ABSY:
-            tmp.udw = addr.udw + reg.Y.udw;
+            tmp.udw = addr.udw + reg->Y.udw;
             break;
         case ZEROX:
-            tmp.udw = reg.X.udw;
+            tmp.udw = reg->X.udw;
             break;
         case ZEROY:
-            tmp.udw = reg.Y.udw;
+            tmp.udw = reg->Y.udw;
             break;
         case IDX_IND:
         {
             word a;
-            a.uw = reg.X.uw + addr.uw;
+            a.uw = reg->X.uw + addr.uw;
             tmp.upart.lo = load(a, ABS).uw;
             a.uw++;
             tmp.upart.hi = load(a, ABS).uw;
@@ -48,7 +48,7 @@ word Mem::translate(word addr, Mode mode) {
             a.upart.lo = load(addr, ABS).uw;
             addr.uw++;
             a.upart.hi = load(addr, ABS).uw;
-            tmp.dw = a.udw + reg.Y.udw;
+            tmp.dw = a.udw + reg->Y.udw;
             break;
         }
         case REL:
@@ -56,9 +56,9 @@ word Mem::translate(word addr, Mode mode) {
                 word a;
                 a.w = ~addr.w;
                 a.uw++;
-                tmp.dw = reg.PC.udw - a.uw; // 2's complement
+                tmp.udw = reg->PC.udw - a.uw; // 2's complement
             } else {
-                tmp.dw = reg.PC.udw + addr.w;
+                tmp.dw = reg->PC.udw + addr.w;
             }
             break;
         default:

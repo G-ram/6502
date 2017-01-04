@@ -8,8 +8,8 @@ std::ostream& operator<<(std::ostream &out, const Decoder::Instruct &i) {
 
 Decoder::Instruct Decoder::decode() {
     word raw, zero;
-    raw.uw = mem.load(reg.PC, ABS).uw;
-    reg.PC.udw++;
+    raw.uw = mem->load(reg->PC, ABS).uw;
+    reg->PC.udw++;
 
     switch(raw.uw) {
         case 0x10: return Decoder::Instruct("BPL", BPL, REL, nextByte());
@@ -85,10 +85,10 @@ Decoder::Instruct Decoder::decode() {
 }
 
 bool Decoder::hasNext() {
-    if(mem.load(reg.PC, ABS).uw == 0x60 && mem.stackEmpty()) // RTS and stack is empty
+    if(mem->load(reg->PC, ABS).uw == 0x60 && mem->stackEmpty()) // RTS and stack is empty
         return false;
 
-    if(mem.load(reg.PC, ABS).uw == 0x00)
+    if(mem->load(reg->PC, ABS).uw == 0x00)
         return false;
 
     return true;
@@ -96,16 +96,16 @@ bool Decoder::hasNext() {
 
 word Decoder::next2Bytes() {
     word tmp;
-    tmp.upart.lo = mem.load(reg.PC, ABS).uw;
-    reg.PC.udw++;
-    tmp.upart.hi = mem.load(reg.PC, ABS).uw;
-    reg.PC.udw++;
+    tmp.upart.lo = mem->load(reg->PC, ABS).uw;
+    reg->PC.udw++;
+    tmp.upart.hi = mem->load(reg->PC, ABS).uw;
+    reg->PC.udw++;
     return tmp;
 }
 
 word Decoder::nextByte() {
     word tmp;
-    tmp.uw = mem.load(reg.PC, ABS).uw;
-    reg.PC.udw++;
+    tmp.uw = mem->load(reg->PC, ABS).uw;
+    reg->PC.udw++;
     return tmp;
 }

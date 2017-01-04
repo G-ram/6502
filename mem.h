@@ -17,12 +17,15 @@ enum Mode{IMM, ABS, ZERO, IND_ABS, ABSX,
 extern std::string modeName[13];
 
 class Mem {
-    Reg &reg;
+private:
+    Reg *reg;
     std::vector<word> stack;
     unsigned char data[MEM_SIZE];
     std::vector<Peripheral> peripherals;
 public:
-    Mem(Reg &reg) : reg(reg) {};
+    Mem(Reg *reg) : reg(reg) {
+        memset(data, 0, MEM_SIZE * sizeof(unsigned char));
+    };
     word translate(word, Mode);
     word load(word, Mode);
     void store(word, word, Mode);

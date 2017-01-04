@@ -44,7 +44,7 @@ std::string binify(const unsigned char& input) {
 
 std::string binify(const unsigned short& input) {
     std::stringstream stream;
-    std::bitset<8> x(input);
+    std::bitset<16> x(input);
     stream << std::hex << x;
     return stream.str();
 }

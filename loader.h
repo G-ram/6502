@@ -12,7 +12,7 @@ private:
     Reg reg;
 public:
     Loader(std::string);
-    Mem &getMem() { return mem; };
-    Reg &getReg() { return reg; };
+    Mem *getMem() { return &mem; };
+    Reg *getReg() { return &reg; };
 };
 #endif

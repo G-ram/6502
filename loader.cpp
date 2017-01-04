@@ -3,7 +3,7 @@
 
 #include "loader.h"
 
-Loader::Loader(std::string filename) : mem(reg), reg() {
+Loader::Loader(std::string filename) : mem(&reg) {
     std::ifstream input(filename, std::ios::binary);
     std::stringstream buffer;
     buffer << input.rdbuf();

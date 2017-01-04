@@ -9,7 +9,7 @@
 #include "reg.h"
 #include "alu.h"
 
-typedef void (*func)(word, Mode, Mem &, Reg &);
+typedef void (*func)(word, Mode, Mem *, Reg *);
 
 class Decoder{
 private:
@@ -28,8 +28,8 @@ private:
     Mode maskMode0[8] = {IMM, ZERO, VOID, ABS, VOID, ZEROX, VOID, ABSX};
     char maskRaw0[8] = {1, 1, 0, 2, 0, 1, 0, 2};
 private:
-    Mem &mem;
-    Reg &reg;
+    Mem *mem;
+    Reg *reg;
 public:
     struct Instruct {
         std::string name;
@@ -40,7 +40,7 @@ public:
             : name(name), op(op), mode(mode), addr(addr) {};
     };
 public:
-    Decoder(Mem &mem, Reg &reg) : mem(mem), reg(reg) {};
+    Decoder(Mem *mem, Reg *reg) : mem(mem), reg(reg) {};
     Instruct decode();
     bool hasNext();
 private:
