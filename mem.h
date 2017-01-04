@@ -24,15 +24,16 @@ private:
     std::vector<Peripheral> peripherals;
 public:
     Mem(Reg *reg) : reg(reg) {
-        memset(data, 0, MEM_SIZE * sizeof(unsigned char));
+        memset(data, 0x60, MEM_SIZE * sizeof(unsigned char));
     };
     word translate(word, Mode);
     word load(word, Mode);
     void store(word, word, Mode);
     void push(word);
-    bool stackEmpty() { return stack.size() > 0; }
+    bool stackEmpty() { return stack.size() == 0; }
     word pop();
     void copyTo(std::string, word);
+    std::string dump();
 private:
     void findPeripheral(word);
 };

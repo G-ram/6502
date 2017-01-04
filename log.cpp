@@ -7,15 +7,15 @@ std::string hexify(const std::string& input) {
     size_t len = input.length();
 
     std::string output;
-    output.reserve(2 * len);
+    output.reserve(3 * len);
     for (size_t i = 0; i < len; ++i) {
+        if(i % 16 == 0) {
+            output.push_back('\n');
+        }
         const unsigned char c = input[i];
         output.push_back(lut[c >> 4]);
         output.push_back(lut[c & 15]);
         output.push_back(' ');
-        if(i % 16 == 0) {
-            output.push_back('\n');
-        }
     }
     return output;
 }

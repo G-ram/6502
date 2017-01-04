@@ -401,7 +401,7 @@ void BVC(word addr, Mode mode, Mem *mem, Reg *reg) {
 }
 
 void JSR(word addr, Mode mode, Mem *mem, Reg *reg) {
-    mem->push(addr);
+    mem->push(reg->PC);
     reg->PC = mem->translate(addr, mode);
 }
 

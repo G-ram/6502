@@ -2,6 +2,7 @@
 #include <fstream>
 
 #include "loader.h"
+#include "log.h"
 
 Loader::Loader(std::string filename) : mem(&reg) {
     std::ifstream input(filename, std::ios::binary);
@@ -19,6 +20,7 @@ Loader::Loader(std::string filename) : mem(&reg) {
     mem.copyTo(raw, initAddr);
 
     // Set PC
-    startAddr += 12; // May Change depending on the file format
-    memcpy(&reg.PC.udw, &startAddr, sizeof(word));;
+    // startAddr = 0x850; // May Change depending on the file format
+    startAddr += 12;
+    memcpy(&reg.PC.udw, &startAddr, sizeof(word));
 }

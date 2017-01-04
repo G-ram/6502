@@ -122,3 +122,7 @@ void Mem::findPeripheral(word addr) {
         }
     }
 }
+
+std::string Mem::dump() {
+    return std::string(reinterpret_cast<char *>(data), MEM_SIZE);
+}
