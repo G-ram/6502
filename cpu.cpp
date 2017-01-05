@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "loader.h"
+#include "loader/utloader.h"
 #include "decoder.h"
 #include "mem.h"
 
@@ -11,7 +11,7 @@ int main(int ac, char *av[]) {
         std::cout << "usage: ./6502 <disk image>" << std::endl;
         return 0;
     }
-    Loader loader = Loader(av[1]); // Creates and loads into memory the program
+    UnitTestLoader loader = UnitTestLoader(av[1]); // Creates and loads into memory the program
     Mem *mem = loader.getMem();
     Reg *reg = loader.getReg();
     Decoder decoder = Decoder(mem, reg);

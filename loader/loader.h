@@ -1,18 +1,18 @@
 #ifndef LOADER_H
 #define LOADER_H
 
-#include <string>
-#include "reg.h"
-#include "mem.h"
+#include "../reg.h"
+#include "../mem.h"
 
 class Loader {
-private:
+protected:
     std::string raw;
     Mem mem;
     Reg reg;
 public:
-    Loader(std::string);
+    Loader() : mem(&reg) {};
     Mem *getMem() { return &mem; };
     Reg *getReg() { return &reg; };
 };
+
 #endif
