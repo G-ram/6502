@@ -7,7 +7,8 @@ def main(args):
 
     filename = args[1]
     hex = open(filename, 'r')
-    bits = bytearray.fromhex(hex.read().rstrip())
+    hex = ''.join(hex.read().split())
+    bits = bytearray.fromhex(hex)
     paths = filename.rsplit('/', 1)
     new_filename = paths[0] + "/" + paths[1].split('.', 1)[0].upper() + ".bin"
     out = open(new_filename, 'wb')

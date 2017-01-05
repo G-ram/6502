@@ -20,6 +20,7 @@ $(TARGET): $(OBJECTS)
 
 $(OBJECTS): $(HEADERS)
 
+.PHONY: test
 test: $(TARGET)
 	python test/runner.py test/asm
 
