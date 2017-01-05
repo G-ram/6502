@@ -1,6 +1,8 @@
 #ifndef PERIPHERAL_H
 #define PERIPHERAL_H
 
+#include "../types.h"
+
 class Mem;
 
 class Peripheral {

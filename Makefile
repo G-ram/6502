@@ -1,13 +1,13 @@
 CXX = clang++
 
-INCLUDES = -I./loader
+INCLUDES = -I./loader -I./peripheral
 
 CXXFLAGS = -std=c++11 -g -Wall
 
 LDFLAGS = -g
 LDLIBS  =
 
-SRC = $(wildcard *.cpp loader/*.cpp)
+SRC = $(wildcard *.cpp loader/*.cpp peripheral/*.cpp)
 TARGET = 6502
 OBJECTS = $(SRC:.cpp=.o)
 HEADERS = $(wildcard *.h)

@@ -6,7 +6,7 @@
 
 #include "types.h"
 #include "reg.h"
-#include "peripheral.h"
+#include "peripheral/peripheral.h"
 
 #define MEM_SIZE 0x10000
 
