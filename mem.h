@@ -6,9 +6,10 @@
 
 #include "types.h"
 #include "reg.h"
-#include "peripheral/peripheral.h"
 
 #define MEM_SIZE 0x10000
+
+class Peripheral;
 
 enum Mode{IMM, ABS, ZERO, IND_ABS, ABSX,
         ABSY, ZEROX, ZEROY, IDX_IND,

@@ -2,8 +2,7 @@
 #define PERIPHERAL_H
 
 #include "../types.h"
-
-class Mem;
+#include "../mem.h"
 
 class Peripheral {
 protected:

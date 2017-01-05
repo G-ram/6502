@@ -18,7 +18,7 @@ int main(int ac, char *av[]) {
     Decoder decoder = Decoder(mem, reg);
     // Add a peripheral
     word hi, lo;
-    hi.udw = 100;
+    hi.udw = 101;
     lo.udw = 100;
     Snoop snooper(lo, hi);
     mem->connect(&snooper);
