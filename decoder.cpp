@@ -66,14 +66,23 @@ Decoder::Instruct Decoder::decode() {
                     if(maskRaw2[b] == 2) {
                         return Decoder::Instruct(maskName2[a], maskOp2[a], maskMode2[b], next2Bytes());
                     } else if(maskRaw2[b] == 1){
+                        if((maskOp2[a] == STX || maskOp2[a] == LDX) && maskMode2[b] == ZEROX)
+                            return Decoder::Instruct(maskName2[a], maskOp2[a], ZEROY, nextByte());
+
+                        if(maskOp2[a] == LDX && maskMode2[b] == ABSX)
+                            return Decoder::Instruct(maskName2[a], maskOp2[a], ABSY, nextByte());
+
                         return Decoder::Instruct(maskName2[a], maskOp2[a], maskMode2[b], nextByte());
                     }
                     return Decoder::Instruct(maskName2[a], maskOp2[a], maskMode2[b], zero);
                 case 0:
                     if(maskRaw0[b] == 2) {
+                        if(a == 3) {
+                            return Decoder::Instruct(maskName0[a], maskOp0[a], IND_ABS, next2Bytes());
+                        }
                         return Decoder::Instruct(maskName0[a], maskOp0[a], maskMode0[b], next2Bytes());
                     } else if(maskRaw0[b] == 1){
-                        return Decoder::Instruct(maskName0[a], maskOp2[a], maskMode0[b], nextByte());
+                        return Decoder::Instruct(maskName0[a], maskOp0[a], maskMode0[b], nextByte());
                     }
                     return Decoder::Instruct(maskName0[a], maskOp0[a], maskMode0[b], zero);
                 default:
@@ -89,8 +98,10 @@ bool Decoder::hasNext() {
     if(mem->load(reg->PC, ABS).uw == 0x60 && mem->stackEmpty()) // RTS and stack is empty
         return false;
 
-    if(mem->load(reg->PC, ABS).uw == 0x00)
+    if(mem->load(reg->PC, ABS).uw == 0x00) { // BRK
+        reg->setStatus(B);
         return false;
+    }
 
     return true;
 }

@@ -25,7 +25,7 @@ private:
 
     func maskOp0[8] = {NOP, BIT, JMP, JMP, STY, LDY, CPY, CPX};
     std::string maskName0[8] = {"NOP", "BIT", "JMP", "JMP", "STY", "LDY", "CPY", "CPX"};
-    Mode maskMode0[8] = {IMM, ZERO, VOID, ABS, VOID, ZEROX, VOID, ABSX};
+    Mode maskMode0[8] = {IMM, ZERO, VOID, ABS, IND_ABS, ZEROX, VOID, ABSX};
     char maskRaw0[8] = {1, 1, 0, 2, 0, 1, 0, 2};
 private:
     Mem *mem;

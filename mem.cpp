@@ -28,10 +28,10 @@ word Mem::translate(word addr, Mode mode) {
             tmp.udw = addr.udw + reg->Y.udw;
             break;
         case ZEROX:
-            tmp.udw = reg->X.udw;
+            tmp.udw = addr.uw + reg->X.uw;
             break;
         case ZEROY:
-            tmp.udw = reg->Y.udw;
+            tmp.udw = addr.uw + reg->Y.udw;
             break;
         case IDX_IND:
         {

@@ -5,7 +5,7 @@
 
 #define GET_BIT(w, p) (w & (1 << p)) > 0
 
-enum StatusBit{C, Z, I, D, B, V, N};
+enum StatusBit{C, Z, I, D, B, unused, V, N};
 
 struct Reg {
     word A;

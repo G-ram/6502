@@ -2,6 +2,8 @@
 #include "log.h"
 
 void wrapup(word operand, Reg *reg) {
+    reg->unsetStatus(N);
+    reg->unsetStatus(Z);
     if(GET_BIT(operand.uw, 7))
         reg->setStatus(N);
 
@@ -28,20 +30,24 @@ void ADC(word addr, Mode mode, Mem *mem, Reg *reg) { //Add
     if(reg->getStatus(D)) { // Decimal
         throw "DECIMAL NOT SUPPORTED YET";
     } else {
-        bool sign = GET_BIT(reg->A.uw, 7);
-        char carry = reg->getStatus(C) ? 1 : 0;
+        unsigned char carry = reg->getStatus(C) ? 1 : 0;
         word a = reg->A;
         word b = mem->load(addr, mode);
-        word tmp;
-        tmp.uw = a.uw + b.uw + carry;
+        const unsigned short res = a.uw + b.uw + carry;
 
-        if(a.w > 0 && b.w > 0 && tmp.w < 0) {
+        if(res > 0xff) {
             reg->setStatus(C);
+        } else {
+            reg->unsetStatus(C);
         }
-        reg->A.udw = tmp.udw;
 
-        if(sign != GET_BIT(reg->A.w, 7)) {
+        reg->A.udw = res;
+
+        const unsigned short overflow = ~(a.udw ^ b.udw) & (a.udw ^ res) & 0x80;
+        if(overflow != 0) {
             reg->setStatus(V);
+        } else{
+            reg->unsetStatus(V);
         }
 
         wrapup(reg->A, reg);
@@ -52,20 +58,25 @@ void SBC(word addr, Mode mode, Mem *mem, Reg *reg) { //Subtract
     if(reg->getStatus(D)) { // Decimal
         throw "DECIMAL NOT SUPPORTED YET";
     } else {
-        bool sign = GET_BIT(reg->A.uw, 7);
-        char carry = reg->getStatus(C) ? 0 : 1;
+        unsigned char carry = reg->getStatus(C) ? 1 : 0;
         word a = reg->A;
         word b = mem->load(addr, mode);
-        word tmp;
-        tmp.uw = a.uw - b.uw - carry;
+        b.uw = ~b.uw; // This is subtraction
+        const unsigned short res = a.uw + b.uw + carry;
 
-        if(a.w < 0 && b.w < 0 && tmp.w > 0) {
+        if(res > 0xff) {
             reg->setStatus(C);
+        } else {
+            reg->unsetStatus(C);
         }
-        reg->A.udw = tmp.udw;
 
-        if(sign != GET_BIT(reg->A.w, 7)) {
+        reg->A.udw = res;
+
+        const unsigned short overflow = ~(a.udw ^ b.udw) & (a.udw ^ res) & 0x80;
+        if(overflow != 0) {
             reg->setStatus(V);
+        } else{
+            reg->unsetStatus(V);
         }
 
         wrapup(reg->A, reg);
@@ -207,7 +218,16 @@ void BIT(word addr, Mode mode, Mem *mem, Reg *reg) {
 }
 
 void ASL(word addr, Mode mode, Mem *mem, Reg *reg) {
-    word tmp = mem->load(addr, mode);
+    word tmp;
+    try {
+        tmp = mem->load(addr, mode);
+    } catch(Mode m) {
+        LOG("HERE");
+        if(m != ACC)
+            throw "Invalid Instruction";
+
+        tmp = reg->A;
+    }
     if(GET_BIT(tmp.w, 7)) {
         reg->setStatus(C);
     } else {
@@ -215,13 +235,25 @@ void ASL(word addr, Mode mode, Mem *mem, Reg *reg) {
     }
 
     tmp.w <<= 1;
-    mem->store(tmp, addr, mode);
+    if(mode == ACC) {
+        reg->A.w = tmp.w;
+    } else {
+        mem->store(tmp, addr, mode);
+    }
 
     wrapup(tmp, reg);
 }
 
 void LSR(word addr, Mode mode, Mem *mem, Reg *reg) {
-    word tmp = mem->load(addr, mode);
+    word tmp;
+    try {
+        tmp = mem->load(addr, mode);
+    } catch(Mode m) {
+        if(m != ACC)
+            throw "Invalid Instruction";
+
+        tmp = reg->A;
+    }
     if(GET_BIT(tmp.w, 0)) {
         reg->setStatus(C);
     } else {
@@ -229,14 +261,26 @@ void LSR(word addr, Mode mode, Mem *mem, Reg *reg) {
     }
 
     tmp.w >>= 1;
-    mem->store(tmp, addr, mode);
+    if(mode == ACC) {
+        reg->A.w = tmp.w;
+    } else {
+        mem->store(tmp, addr, mode);
+    }
 
     wrapup(tmp, reg);
 }
 
 void ROL(word addr, Mode mode, Mem *mem, Reg *reg) {
-    word tmp = mem->load(addr, mode);
     if(reg->getStatus(C)) {
+        word tmp;
+        try {
+            tmp = mem->load(addr, mode);
+        } catch(Mode m) {
+            if(m != ACC)
+                throw "Invalid Instruction";
+
+            tmp = reg->A;
+        }
         if(GET_BIT(tmp.uw, 7)) {
             reg->setStatus(C);
         } else {
@@ -244,6 +288,11 @@ void ROL(word addr, Mode mode, Mem *mem, Reg *reg) {
         }
         tmp.w <<= 1;
         tmp.w |= 1;
+        if(mode == ACC) {
+            reg->A.w = tmp.w;
+        } else {
+            mem->store(tmp, addr, mode);
+        }
         wrapup(tmp, reg);
     } else {
         ASL(addr, mode, mem, reg);
@@ -251,8 +300,16 @@ void ROL(word addr, Mode mode, Mem *mem, Reg *reg) {
 }
 
 void ROR(word addr, Mode mode, Mem *mem, Reg *reg) {
-    word tmp = mem->load(addr, mode);
     if(reg->getStatus(C)) {
+        word tmp;
+        try {
+            tmp = mem->load(addr, mode);
+        } catch(Mode m) {
+            if(m != ACC)
+                throw "Invalid Instruction";
+
+            tmp = reg->A;
+        }
         if(GET_BIT(tmp.uw, 0)) {
             reg->setStatus(C);
         } else {
@@ -260,6 +317,11 @@ void ROR(word addr, Mode mode, Mem *mem, Reg *reg) {
         }
         tmp.w >>= 1;
         tmp.w |= 128;
+        if(mode == ACC) {
+            reg->A.w = tmp.w;
+        } else {
+            mem->store(tmp, addr, mode);
+        }
         wrapup(tmp, reg);
     } else {
         LSR(addr, mode, mem, reg);
@@ -282,7 +344,7 @@ void TXA(word addr, Mode mode, Mem *mem, Reg *reg) {
 }
 
 void TYA(word addr, Mode mode, Mem *mem, Reg *reg) {
-    reg->Y = reg->X;
+    reg->A = reg->Y;
     wrapup(reg->Y, reg);
 }
 
