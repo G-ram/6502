@@ -25,7 +25,7 @@ private:
     std::vector<Peripheral *> peripherals;
 public:
     Mem(Reg *reg) : reg(reg) {
-        memset(data, 0x60, MEM_SIZE * sizeof(unsigned char));
+        memset(data, 0, MEM_SIZE * sizeof(unsigned char));
     };
     word translate(word, Mode);
     word load(word, Mode);

@@ -18,8 +18,8 @@ int main(int ac, char *av[]) {
     Decoder decoder = Decoder(mem, reg);
     // Add a peripheral
     word hi, lo;
-    hi.udw = 101;
-    lo.udw = 100;
+    hi.udw = 0x101;
+    lo.udw = 0x100;
     Snoop snooper(lo, hi);
     mem->connect(&snooper);
     while(decoder.hasNext()) {
@@ -27,7 +27,6 @@ int main(int ac, char *av[]) {
             Decoder::Instruct cur = decoder.decode(); // Seg fault
             LOG("PC: " << hexify(reg->PC.udw) << " : " << cur);
             cur.op(cur.addr, cur.mode, mem, reg);
-            mem->broadcast();
         } catch(char const * ex){
             LOG("ERROR: " << ex);
             return 0;
@@ -36,7 +35,5 @@ int main(int ac, char *av[]) {
             return 0;
         }
     };
-    // LOG("--------------------------");
-    // LOG("--------------------------");
-    // LOG(hexify(mem->dump()));
+    mem->broadcast();
 }

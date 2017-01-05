@@ -20,6 +20,9 @@ $(TARGET): $(OBJECTS)
 
 $(OBJECTS): $(HEADERS)
 
+test: $(TARGET)
+	python test/runner.py test/asm
+
 .PHONY: clean
 clean:
 	rm -f *~ a.out core $(OBJECTS) $(TARGET)

@@ -2,6 +2,7 @@
 #include <fstream>
 
 #include "utloader.h"
+#include "../log.h"
 
 UnitTestLoader::UnitTestLoader(std::string filename) {
     std::ifstream input(filename, std::ios::binary);
@@ -9,9 +10,8 @@ UnitTestLoader::UnitTestLoader(std::string filename) {
     buffer << input.rdbuf();
     raw = buffer.str();
 
-    word startAddr;
-    //Copy contents into memory
-    mem.copyTo(raw, startAddr);
-    // Set PC
-    memcpy(&reg.PC.udw, &startAddr, sizeof(word));
+    //Copy contents into memory, automatically sets PC
+    reg.PC.udw = 0x0600; // Start address
+    //reg.S.udw = 0x200; // Stack Pointer Initialization
+    mem.copyTo(raw, reg.PC);
 }

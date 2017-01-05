@@ -1,7 +1,7 @@
 #include <string>
 #include "mem.h"
-#include "log.h"
 #include "peripheral/peripheral.h"
+#include "log.h"
 
 std::string modeName[13] = {"IMM", "ABS", "ZERO", "IND_ABS", "ABSX",
                             "ABSY", "ZEROX", "ZEROY", "IDX_IND",
