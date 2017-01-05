@@ -90,7 +90,6 @@ void Mem::store(word newData, word addr, Mode mode) {
     try {
         word taddr = translate(addr, mode);
         data[taddr.udw] = newData.uw;
-        findPeripheral(addr);
     } catch(char const *ex){
         return;
     }
@@ -115,11 +114,9 @@ void Mem::copyTo(std::string raw, word addr) {
     memcpy(&data[taddr], raw.c_str(), sizeof(char) * raw.length());
 }
 
-void Mem::findPeripheral(word addr) {
+void Mem::broadcast() {
     for(auto p : peripherals) {
-        if(p.inRange(addr)) {
-            p.exec(*this);
-        }
+        p->exec(this);
     }
 }
 

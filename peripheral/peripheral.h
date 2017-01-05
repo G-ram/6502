@@ -6,10 +6,12 @@
 class Mem;
 
 class Peripheral {
+protected:
+    word hi;
+    word lo;
 public:
     Peripheral() {};
-    virtual void exec(Mem &) {};
-    virtual bool inRange(word) { return false; };
+    virtual void exec(Mem *) {};
 };
 
 #endif

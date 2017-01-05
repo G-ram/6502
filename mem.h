@@ -21,7 +21,7 @@ private:
     Reg *reg;
     std::vector<word> stack;
     unsigned char data[MEM_SIZE];
-    std::vector<Peripheral> peripherals;
+    std::vector<Peripheral *> peripherals;
 public:
     Mem(Reg *reg) : reg(reg) {
         memset(data, 0x60, MEM_SIZE * sizeof(unsigned char));
@@ -34,8 +34,8 @@ public:
     word pop();
     void copyTo(std::string, word);
     std::string dump();
-private:
-    void findPeripheral(word);
+    void connect(Peripheral *p) { peripherals.push_back(p); }
+    void broadcast();
 };
 
 #endif

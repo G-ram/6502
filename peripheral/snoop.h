@@ -3,8 +3,13 @@
 
 #include "peripheral.h"
 
-class SNOOP : public Peripheral {
-    SNOOP() {};
+class Snoop : public Peripheral {
+public:
+    Snoop(word alo, word ahi) {
+        hi = ahi;
+        lo = alo;
+    };
+    void exec(Mem *);
 };
 
 #endif

@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "loader/utloader.h"
+#include "peripheral/snoop.h"
 #include "decoder.h"
 #include "mem.h"
 
@@ -15,11 +16,18 @@ int main(int ac, char *av[]) {
     Mem *mem = loader.getMem();
     Reg *reg = loader.getReg();
     Decoder decoder = Decoder(mem, reg);
+    // Add a peripheral
+    word hi, lo;
+    hi.udw = 100;
+    lo.udw = 100;
+    Snoop snooper(lo, hi);
+    mem->connect(&snooper);
     while(decoder.hasNext()) {
         try {
             Decoder::Instruct cur = decoder.decode(); // Seg fault
             LOG("PC: " << hexify(reg->PC.udw) << " : " << cur);
             cur.op(cur.addr, cur.mode, mem, reg);
+            mem->broadcast();
         } catch(char const * ex){
             LOG("ERROR: " << ex);
             return 0;
