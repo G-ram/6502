@@ -2,10 +2,10 @@ CXX = clang++
 
 INCLUDES = -I./loader -I./peripheral
 
-CXXFLAGS = -std=c++11 -g -Wall
+CXXFLAGS = -std=c++11 -g -Wall -I/usr/local/include/SDL2 -D_THREAD_SAFE
 
 LDFLAGS = -g
-LDLIBS  =
+LDLIBS  = -L/usr/local/lib -lSDL2
 
 SRC = $(wildcard *.cpp loader/*.cpp peripheral/*.cpp)
 COMMON=$(patsubst cpu%,,${SRC})
@@ -23,7 +23,7 @@ $(TARGET): $(OBJECTS)
 $(OBJECTS): $(HEADERS)
 
 .PHONY: test
-test: $(TARGET)
+test: $(TEST) $(TARGET)
 	python test/runner.py test/asm
 
 .PHONY: clean
