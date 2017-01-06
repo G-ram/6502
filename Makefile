@@ -8,8 +8,10 @@ LDFLAGS = -g
 LDLIBS  =
 
 SRC = $(wildcard *.cpp loader/*.cpp peripheral/*.cpp)
+COMMON=$(patsubst cpu%,,${SRC})
 TARGET = 6502
-OBJECTS = $(SRC:.cpp=.o)
+CPU = cpu.cpp
+OBJECTS = $(COMMON:.cpp=.o) $(CPU)
 HEADERS = $(wildcard *.h)
 
 .PHONY: default
