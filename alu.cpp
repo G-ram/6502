@@ -349,11 +349,11 @@ void TYA(word addr, Mode mode, Mem *mem, Reg *reg) {
 }
 
 void TSX(word addr, Mode mode, Mem *mem, Reg *reg) {
-    reg->P = reg->X;
+    reg->X = reg->S;
 }
 
 void TXS(word addr, Mode mode, Mem *mem, Reg *reg) {
-    reg->X = reg->P;
+    reg->S = reg->X;
 }
 
 void PHA(word addr, Mode mode, Mem *mem, Reg *reg) {
@@ -361,15 +361,16 @@ void PHA(word addr, Mode mode, Mem *mem, Reg *reg) {
 }
 
 void PHP(word addr, Mode mode, Mem *mem, Reg *reg) {
-    mem->push(reg->S);
+    mem->push(reg->P);
 }
 
 void PLA(word addr, Mode mode, Mem *mem, Reg *reg) {
+    LOG("HERE");
     reg->A = mem->pop();
 }
 
 void PLP(word addr, Mode mode, Mem *mem, Reg *reg) {
-    reg->S = mem->pop();
+    reg->P = mem->pop();
 }
 
 void CLC(word addr, Mode mode, Mem *mem, Reg *reg) {
@@ -463,12 +464,19 @@ void BVC(word addr, Mode mode, Mem *mem, Reg *reg) {
 }
 
 void JSR(word addr, Mode mode, Mem *mem, Reg *reg) {
-    mem->push(reg->PC);
+    word lo, hi;
+    lo.uw = reg->PC.upart.lo;
+    hi.uw = reg->PC.upart.hi;
+    mem->push(lo);
+    mem->push(hi);
     reg->PC = mem->translate(addr, mode);
 }
 
 void RTS(word addr, Mode mode, Mem *mem, Reg *reg) {
-    reg->PC = mem->pop();
+    word hi = mem->pop();
+    word lo = mem->pop();
+    reg->PC.upart.lo = lo.uw;
+    reg->PC.upart.hi = hi.uw;
 }
 
 void RTI(word addr, Mode mode, Mem *mem, Reg *reg) {

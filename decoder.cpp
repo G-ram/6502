@@ -30,7 +30,7 @@ Decoder::Instruct Decoder::decode() {
         case 0x08: return Decoder::Instruct("PHP", PHP, VOID, zero);
         case 0x28: return Decoder::Instruct("PLP", PLP, VOID, zero);
         case 0x48: return Decoder::Instruct("PHA", PHA, VOID, zero);
-        case 0x68: return Decoder::Instruct("PLA", PHA, VOID, zero);
+        case 0x68: return Decoder::Instruct("PLA", PLA, VOID, zero);
         case 0x88: return Decoder::Instruct("DEY", DEY, VOID, zero);
         case 0xA8: return Decoder::Instruct("TAY", TAY, VOID, zero);
         case 0xC8: return Decoder::Instruct("INY", INY, VOID, zero);
@@ -95,9 +95,6 @@ Decoder::Instruct Decoder::decode() {
 }
 
 bool Decoder::hasNext() {
-    if(mem->load(reg->PC, ABS).uw == 0x60 && mem->stackEmpty()) // RTS and stack is empty
-        return false;
-
     if(mem->load(reg->PC, ABS).uw == 0x00) { // BRK
         reg->setStatus(B);
         return false;

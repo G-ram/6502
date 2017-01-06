@@ -20,7 +20,6 @@ extern std::string modeName[13];
 class Mem {
 private:
     Reg *reg;
-    std::vector<word> stack;
     unsigned char data[MEM_SIZE];
     std::vector<Peripheral *> peripherals;
 public:
@@ -31,7 +30,6 @@ public:
     word load(word, Mode);
     void store(word, word, Mode);
     void push(word);
-    bool stackEmpty() { return stack.size() == 0; }
     word pop();
     void copyTo(std::string, word);
     std::string dump();

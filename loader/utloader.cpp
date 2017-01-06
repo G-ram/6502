@@ -10,8 +10,8 @@ UnitTestLoader::UnitTestLoader(std::string filename) {
     buffer << input.rdbuf();
     raw = buffer.str();
 
-    //Copy contents into memory, automatically sets PC
-    reg.PC.udw = 0x0600; // Start address
-    //reg.S.udw = 0x200; // Stack Pointer Initialization
+    //Copy contents into memory
+    reg.PC.udw = 0x0600; // Entry Point
+    reg.S.udw = 0x20; // Stack Pointer
     mem.copyTo(raw, reg.PC);
 }

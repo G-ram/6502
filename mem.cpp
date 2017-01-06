@@ -97,15 +97,13 @@ void Mem::store(word newData, word addr, Mode mode) {
 }
 
 void Mem::push(word newData) {
-    stack.push_back(newData);
+    store(newData, reg->S, ABS);
+    reg->S.uw += 1;
 }
 
 word Mem::pop() {
-    if(stack.empty())
-        throw "stack not balanced";
-
-    word tmp = stack.back();
-    stack.pop_back();
+    reg->S.uw -= 1;
+    word tmp = load(reg->S, ABS);
     return tmp;
 }
 
