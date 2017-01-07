@@ -1,3 +1,7 @@
 cc65/
-test/asm/*.bin
-test/asm/*.out1
+lib/test/asm/*.bin
+lib/test/asm/*.out1
+*.a
+test-6052
+*.o
+*.bin
