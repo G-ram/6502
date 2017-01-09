@@ -8,6 +8,6 @@ void step() {
 
 }
 
-size_t getCycles() {
-
+std::size_t getCycles() {
+    return 0;
 }

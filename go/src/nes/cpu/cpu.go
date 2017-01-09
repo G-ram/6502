@@ -1,13 +1,14 @@
 package cpu
 
 /*
+#cgo LDFLAGS: -l6502
 #include <stdlib.h>
+#include "cpu_c.h"
 */
-
 import "C"
 
 type CPU struct {
-	p C.CPU
+	p C.CPU_p
 }
 
 func getCPU(uint16 PC, uint16 SP) CPU {
@@ -28,8 +29,8 @@ func (cpu CPU) write(byte data, uint16 addr, byte mode) {
 	C.write(cpu.p, C.uchar(data), C.ushort(addr), C.uchar(mode))
 }
 
-func (cpu CPU) copyTo(string _data uint16 addr) {
-	var data = C.CString(_data)
+func (cpu CPU) copyTo(string _data, uint16 addr) {
+	data := C.CString(_data)
 	C.copyTo(cpu.p, data, len(_data), C.ushort(addr))
 	C.free(data)
 }

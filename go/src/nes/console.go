@@ -3,6 +3,8 @@ package nes
 import (
 	"image"
 	"time"
+
+	"nes/cpu"
 )
 
 // Number of video frames per second.
@@ -12,7 +14,7 @@ const framesPerSecond = 60
 // cartridge, CPU, PPU, and joypads).
 type Console struct {
 	Cart    *Cartridge
-	CPU     *CPU
+	cpu.CPU *CPU
 	PPU     *PPU
 	Joypads [2]*Joypad
 
@@ -25,7 +27,7 @@ type Console struct {
 func NewConsole(cart *Cartridge) *Console {
 	c := &Console{}
 	c.Cart = cart
-	c.CPU = NewCPU(c)
+	// c.CPU = NewCPU(c)
 	c.PPU = NewPPU(c)
 
 	for i := range c.Joypads {
@@ -51,10 +53,10 @@ func (c *Console) Step() (*image.RGBA, error) {
 	var cpuCycles uint64
 	var ppuCycles uint64
 
-	cpuCycles, err := c.CPU.Step()
-	if err != nil {
-		return nil, err
-	}
+	// cpuCycles, err := c.CPU.Step()
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	for ppuCycles < cpuCycles*3 {
 		var image *image.RGBA

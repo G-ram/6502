@@ -8,7 +8,7 @@ CXXFLAGS = -std=c++11 -g -Wall
 LDFLAGS = -g
 LDLIBS  =
 
-TARGET = 6502.a
+TARGET = lib6502.a
 TEST_TARGET = test-6502
 COMMON = $(wildcard *.cpp peripheral/*.cpp)
 LOADER = $(wildcard loader/*.cpp)
