@@ -3,18 +3,21 @@ CXX = clang++
 INCLUDES = -I./loader -I./peripheral
 TEST_INCLUDES = $(INCLUDES) -I./cpu
 
-CXXFLAGS = -std=c++11 -g -Wall #-I/usr/local/include/SDL2 -D_THREAD_SAFE
+CXXFLAGS = -std=c++11 -g -Wall
 
 LDFLAGS = -g
-LDLIBS  = #-L/usr/local/lib -lSDL2
+LDLIBS  =
 
 TARGET = 6502.a
 TEST_TARGET = test-6502
-SRC = $(wildcard *.cpp loader/*.cpp peripheral/*.cpp)
-OBJECTS = $(SRC:.cpp=.o)
-TEST_OBJECTS = $(OBJECTS) cpu/cpu_test.cpp
-HEADERS = $(wildcard *.h loader/*.h peripheral/*.h)
-TEST_HEADERS = $(HEADERS) $(wildcard cpu/*.h)
+COMMON = $(wildcard *.cpp peripheral/*.cpp)
+LOADER = $(wildcard loader/*.cpp)
+
+OBJECTS = $(COMMON:.cpp=.o)
+LOADER_OBJECTS = $(LOADER:.cpp=.o)
+TEST_OBJECTS = $(OBJECTS) $(LOADER_OBJECTS) cpu/cpu_test.cpp
+HEADERS = $(wildcard *.h)
+TEST_HEADERS = $(HEADERS) $(wildcard loader/*.h peripheral/*.h cpu/*.h)
 
 .PHONY: lib
 lib: $(TARGET)
@@ -28,14 +31,14 @@ $(OBJECTS): $(HEADERS)
 test: $(TEST_TARGET)
 	python test/runner.py test/asm
 
-$(TEST_TARGET): $(OBJECTS)
+$(TEST_TARGET): $(TEST_OBJECTS)
 	$(CXX) $(CXXFLAGS) $(TEST_INCLUDES) -o $(TEST_TARGET) $(TEST_OBJECTS) $(LDFLAGS) $(LDLIBS)
 
 $(TEST_OBJECTS): $(TEST_HEADERS)
 
 .PHONY: clean
 clean:
-	rm -f *~ *.o core $(OBJECTS) $(TARGET) $(TEST_TARGET)
+	rm -f *~ *.o core $(TARGET) $(TEST_TARGET)
 
 .PHONY: all
-all: clean default
+all: clean lib
