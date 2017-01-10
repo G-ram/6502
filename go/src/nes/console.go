@@ -27,7 +27,7 @@ type Console struct {
 func NewConsole(cart *Cartridge) *Console {
 	c := &Console{}
 	c.Cart = cart
-	c.CPU = getCPU(87, 8)
+	c.CPU = getCPU(87, 8) // NEEDS TO BE CHANGED
 	c.PPU = NewPPU(c)
 
 	for i := range c.Joypads {
