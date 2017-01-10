@@ -7,7 +7,7 @@
 #include "types.h"
 #include "reg.h"
 
-#define MEM_SIZE 0x10000
+#define MEM_SIZE 0xFFFF
 
 class Peripheral;
 
@@ -23,7 +23,8 @@ private:
     unsigned char data[MEM_SIZE];
     std::vector<Peripheral *> peripherals;
 public:
-    Mem(Reg *reg) : reg(reg) {
+    unsigned char cycles;
+    Mem(Reg *reg) : reg(reg), cycles(0) {
         memset(data, 0, MEM_SIZE * sizeof(unsigned char));
     };
     word translate(word, Mode);
@@ -33,8 +34,9 @@ public:
     word pop();
     void copyTo(std::string, word);
     std::string dump();
-    void connect(Peripheral *p) { peripherals.push_back(p); }
+    void connect(Peripheral *p) { peripherals.push_back(p); };
     void broadcast();
+    bool pagesEqual(word, word);
 };
 
 #endif

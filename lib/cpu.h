@@ -10,12 +10,13 @@ class CPU {
 public:
     Mem *mem;
 private:
+    unsigned long long cycles;
     Reg *reg;
     Decoder *decoder;
 public:
     CPU(word, word);
     void step();
-    size_t getCycles();
+    unsigned long long getCycles() { return cycles; };
 };
 
 #endif

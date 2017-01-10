@@ -23,9 +23,13 @@ word Mem::translate(word addr, Mode mode) {
             break;
         case ABSX:
             tmp.udw = addr.udw + reg->X.udw;
+            if(!pagesEqual(tmp, addr)) // Page boundary
+                cycles++;
             break;
         case ABSY:
             tmp.udw = addr.udw + reg->Y.udw;
+            if(!pagesEqual(tmp, addr)) // Page boundary
+                cycles++;
             break;
         case ZEROX:
             tmp.udw = addr.uw + reg->X.uw;
@@ -50,6 +54,8 @@ word Mem::translate(word addr, Mode mode) {
             addr.uw++;
             a.upart.hi = load(addr, ABS).uw;
             tmp.dw = a.udw + reg->Y.udw;
+            if(!pagesEqual(tmp, a)) // Page boundary
+                cycles++;
             break;
         }
         case REL:
@@ -121,4 +127,8 @@ void Mem::broadcast() {
 
 std::string Mem::dump() {
     return std::string(reinterpret_cast<char *>(data), MEM_SIZE);
+}
+
+bool Mem::pagesEqual(word addrA, word addrB) {
+    return (addrA.udw & 0xFF00) == (addrB.udw & 0xFF00);
 }

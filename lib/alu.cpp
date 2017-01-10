@@ -435,31 +435,51 @@ void BEQ(word addr, Mode mode, Mem *mem, Reg *reg) {
 
 void BNE(word addr, Mode mode, Mem *mem, Reg *reg) {
     if(!reg->getStatus(Z)) {
-        reg->PC = mem->translate(addr, mode);
+        mem->cycles++; // Hack to make branches work
+        word tmp = mem->translate(addr, mode);
+        if(!mem->pagesEqual(tmp, reg->PC))
+            mem->cycles++;
+        reg->PC = tmp;
     }
 }
 
 void BMI(word addr, Mode mode, Mem *mem, Reg *reg) {
     if(reg->getStatus(N)) {
-        reg->PC = mem->translate(addr, mode);
+        mem->cycles++; // Hack to make branches work
+        word tmp = mem->translate(addr, mode);
+        if(!mem->pagesEqual(tmp, reg->PC))
+            mem->cycles++;
+        reg->PC = tmp;
     }
 }
 
 void BPL(word addr, Mode mode, Mem *mem, Reg *reg) {
     if(!reg->getStatus(N)) {
-        reg->PC = mem->translate(addr, mode);
+        mem->cycles++; // Hack to make branches work
+        word tmp = mem->translate(addr, mode);
+        if(!mem->pagesEqual(tmp, reg->PC))
+            mem->cycles++;
+        reg->PC = tmp;
     }
 }
 
 void BVS(word addr, Mode mode, Mem *mem, Reg *reg) {
     if(reg->getStatus(V)) {
-        reg->PC = mem->translate(addr, mode);
+        mem->cycles++; // Hack to make branches work
+        word tmp = mem->translate(addr, mode);
+        if(!mem->pagesEqual(tmp, reg->PC))
+            mem->cycles++;
+        reg->PC = tmp;
     }
 }
 
 void BVC(word addr, Mode mode, Mem *mem, Reg *reg) {
     if(!reg->getStatus(V)) {
-        reg->PC = mem->translate(addr, mode);
+        mem->cycles++; // Hack to make branches work
+        word tmp = mem->translate(addr, mode);
+        if(!mem->pagesEqual(tmp, reg->PC))
+            mem->cycles++;
+        reg->PC = tmp;
     }
 }
 

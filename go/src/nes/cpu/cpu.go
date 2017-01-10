@@ -3,7 +3,7 @@ package cpu
 /*
 #cgo LDFLAGS: -l6502
 #include <stdlib.h>
-#include "cpu_c.h"
+#include "bridge.h"
 */
 import "C"
 
@@ -39,6 +39,6 @@ func (cpu CPU) step() {
 	C.step(cpu.p)
 }
 
-func (cpu CPU) step() uint32 {
-	return uint32(C.step(cpu.p))
+func (cpu CPU) getCycles() uint64 {
+	return uint64(C.getCycles())
 }

@@ -27,7 +27,7 @@ type Console struct {
 func NewConsole(cart *Cartridge) *Console {
 	c := &Console{}
 	c.Cart = cart
-	// c.CPU = NewCPU(c)
+	c.CPU = getCPU(87, 8)
 	c.PPU = NewPPU(c)
 
 	for i := range c.Joypads {
@@ -53,12 +53,10 @@ func (c *Console) Step() (*image.RGBA, error) {
 	var cpuCycles uint64
 	var ppuCycles uint64
 
-	// cpuCycles, err := c.CPU.Step()
-	// if err != nil {
-	// 	return nil, err
-	// }
+	cpu.step(c.CPU)
+	cpuCycles = cpu.getCycles(c.CPU)
 
-	for ppuCycles < cpuCycles*3 {
+	for ppuCycles < cpuCycles * 3 {
 		var image *image.RGBA
 		ppuCycles, image = c.PPU.Step()
 
