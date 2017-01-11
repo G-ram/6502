@@ -10,6 +10,11 @@ public:
         lo = alo;
     };
     void exec(Mem *);
+    bool inRange(word) { return false; };
+    word map(word, word) {
+        word tmp;
+        return tmp;
+    };
 };
 
 #endif

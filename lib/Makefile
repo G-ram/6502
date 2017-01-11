@@ -10,7 +10,7 @@ LDLIBS  =
 TARGET = lib6502.a
 SRC = $(wildcard *.cpp)
 OBJECTS = $(SRC:.cpp=.o)
-HEADERS = $(wildcard *.h)
+HEADERS = $(wildcard headers/*.h)
 
 .PHONY: lib
 lib: $(TARGET)

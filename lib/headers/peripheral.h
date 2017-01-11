@@ -11,6 +11,11 @@ protected:
 public:
     Peripheral() {};
     virtual void exec(Mem *) {};
+    virtual bool inRange(word) { return false; };
+    virtual word map(word, word) {
+        word tmp;
+        return tmp; 
+    };
 };
 
 #endif
