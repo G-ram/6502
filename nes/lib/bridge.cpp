@@ -1,7 +1,7 @@
 #include <string>
 
 #include "bridge.h"
-#include "cpu.h"
+#include "headers/cpu.h"
 
 CPU_p getCPU(unsigned short _PC, unsigned short _SP) {
     word PC, SP;

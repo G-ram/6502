@@ -1,5 +1,5 @@
-#include "cpu.h"
-#include "log.h"
+#include "headers/cpu.h"
+#include "headers/log.h"
 
 CPU::CPU(word PC, word SP) : cycles(0) {
     reg->PC = PC;

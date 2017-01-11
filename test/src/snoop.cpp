@@ -1,5 +1,5 @@
 #include "snoop.h"
-#include "../log.h"
+#include "headers/log.h"
 
 void Snoop::exec(Mem *mem) {
     for(unsigned short i = lo.udw; i <= hi.udw; i++) {

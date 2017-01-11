@@ -1,5 +1,5 @@
-#include "reg.h"
-#include "log.h"
+#include "headers/reg.h"
+#include "headers/log.h"
 
 std::ostream& operator<<(std::ostream& out, const Reg& r){
     out << "A: " << hexify(r.A.uw) << std::endl;

@@ -1,7 +1,7 @@
 #ifndef SNOOP_H
 #define SNOOP_H
 
-#include "peripheral.h"
+#include "headers/peripheral.h"
 
 class Snoop : public Peripheral {
 public:

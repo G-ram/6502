@@ -1,7 +1,7 @@
 import sys
 import difflib
 from subprocess import call
-from os import listdir, devnull
+from os import listdir, devnull, getcwd
 from os.path import isfile, join
 
 def main(args):
@@ -18,14 +18,14 @@ def main(args):
     for f in onlyfiles:
         tests += 1
         file_path = join(path, f)
-        call(["python", "test/hex2bin.py", file_path]) #convert to binary
+        call(["python", "../hex2bin.py", file_path]) #convert to binary
         filename = f.split('.', 1)[0].upper()
         bin_path = join(path, filename + ".bin")
         actual_out_path = join(path, filename + ".out")
         actual = open(actual_out_path, "r")
         out_path = join(path, filename + ".out1")
         gen = open(out_path, "w+")
-        call(["./test-6502", bin_path], stderr=gen, stdout=FNULL) # exec test
+        call(["./6502", bin_path], stderr=gen, stdout=FNULL) # exec test
         gen.seek(0, 0)
         diff = difflib.unified_diff(
             actual.readlines(),

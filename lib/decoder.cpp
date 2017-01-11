@@ -1,5 +1,5 @@
-#include "decoder.h"
-#include "log.h"
+#include "headers/decoder.h"
+#include "headers/log.h"
 
 std::ostream& operator<<(std::ostream &out, const Decoder::Instruct &i) {
     out << "OP(" << i.name << ") M(" << modeName[i.mode] << ")" << " AD(" << hexify(i.addr.udw) << ")";

@@ -1,8 +1,8 @@
 #ifndef LOADER_H
 #define LOADER_H
 
-#include "../reg.h"
-#include "../mem.h"
+#include "reg.h"
+#include "mem.h"
 
 class Loader {
 protected:

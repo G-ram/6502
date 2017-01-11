@@ -1,5 +1,5 @@
-#include "alu.h"
-#include "log.h"
+#include "headers/alu.h"
+#include "headers/log.h"
 
 void wrapup(word operand, Reg *reg) {
     reg->unsetStatus(N);

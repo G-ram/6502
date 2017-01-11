@@ -1,11 +1,11 @@
 #include <iostream>
 
-#include "../loader/utloader.h"
-#include "../peripheral/snoop.h"
-#include "../decoder.h"
-#include "../mem.h"
+#include "headers/decoder.h"
+#include "headers/mem.h"
+#include "headers/log.h"
 
-#include "../log.h"
+#include "utloader.h"
+#include "snoop.h"
 
 int main(int ac, char *av[]) {
     if(ac != 2) {

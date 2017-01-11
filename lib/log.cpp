@@ -1,6 +1,6 @@
 #include <sstream>
 
-#include "log.h"
+#include "headers/log.h"
 
 std::string hexify(const std::string& input) {
     static const char* const lut = "0123456789ABCDEF";

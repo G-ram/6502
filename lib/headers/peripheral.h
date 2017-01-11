@@ -1,8 +1,8 @@
 #ifndef PERIPHERAL_H
 #define PERIPHERAL_H
 
-#include "../types.h"
-#include "../mem.h"
+#include "types.h"
+#include "mem.h"
 
 class Peripheral {
 protected:
