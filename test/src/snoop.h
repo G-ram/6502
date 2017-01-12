@@ -5,12 +5,13 @@
 
 class Snoop : public Peripheral {
 public:
-    Snoop(word alo, word ahi) {
-        hi = ahi;
-        lo = alo;
+    Snoop(word _lo, word _hi) {
+        hi = _hi;
+        lo = _lo;
     };
     void exec(Mem *);
     bool inRange(word) { return false; };
+    bool doesDirty() { return false; }
     word map(word, word) {
         word tmp;
         return tmp;

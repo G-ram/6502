@@ -17,6 +17,7 @@ public:
     CPU(word, word);
     void step();
     unsigned long long getCycles() { return cycles; };
+    ~CPU();
 };
 
 #endif

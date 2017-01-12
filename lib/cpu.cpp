@@ -22,3 +22,8 @@ void CPU::step() {
         LOG("ERROR: " << modeName[ex]);
     }
 }
+
+CPU::~CPU() {
+    delete decoder;
+    delete mem;
+}

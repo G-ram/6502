@@ -1,7 +1,7 @@
-#include <string>
-
-#include "bridge.h"
 #include "headers/cpu.h"
+#include "bridge.h"
+#include "reader.h"
+#include "writer.h"
 
 CPU_p getCPU(unsigned short _PC, unsigned short _SP) {
     word PC, SP;
@@ -15,29 +15,22 @@ void freeCPU(CPU_p _cpu) {
     delete cpu;
 }
 
-unsigned char read(CPU_p _cpu, unsigned short _addr, unsigned char _mode) {
+void addReader(CPU_p _cpu, unsigned short _lo, unsigned short _hi) {
     CPU *cpu = (CPU* )_cpu;
-    word addr;
-    addr.udw = _addr;
-    Mode mode = static_cast<Mode>(_mode);
-    return cpu->mem->load(addr, mode).uw;
+    word lo, hi;
+    lo.udw = _lo;
+    hi.udw = _hi;
+    Reader *reader = new Reader(lo, hi); // Not freed at the moment
+    cpu->mem->connect(reader);
 }
 
-void write(CPU_p _cpu, unsigned char _data, unsigned short _addr, unsigned char _mode) {
+void addWriter(CPU_p _cpu, unsigned short _lo, unsigned short _hi) {
     CPU *cpu = (CPU* )_cpu;
-    word data, addr;
-    data.upart.lo = _data;
-    addr.udw = _addr;
-    Mode mode = static_cast<Mode>(_mode);
-    cpu->mem->store(data, addr, mode);
-}
-
-void copyTo(CPU_p _cpu, char *_data, size_t length, unsigned short _addr) {
-    CPU *cpu = (CPU* )_cpu;
-    word addr;
-    addr.udw = _addr;
-    std::string data(_data, _data + length);
-    cpu->mem->copyTo(data, addr);
+    word lo, hi;
+    lo.udw = _lo;
+    hi.udw = _hi;
+    Writer *writer = new Writer(lo, hi); // Not freed at the moment
+    cpu->mem->connect(writer);
 }
 
 void step(CPU_p _cpu) {

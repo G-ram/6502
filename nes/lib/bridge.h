@@ -8,9 +8,8 @@ extern "C" {
 	typedef void* CPU_p;
 	CPU_p getCPU(unsigned short, unsigned short);
 	void freeCPU(CPU_p);
-	unsigned char read(CPU_p, unsigned short, unsigned char);
-    void write(CPU_p, unsigned char, unsigned short, unsigned char);
-    void copyTo(CPU_p, char *, size_t, unsigned short);
+	void addReader(CPU_p _cpu, unsigned short _lo, unsigned short _hi);
+	void addWriter(CPU_p _cpu, unsigned short _lo, unsigned short _hi);
     void step(CPU_p);
     unsigned long long getCycles(CPU_p);
 

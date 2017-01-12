@@ -81,7 +81,7 @@ word Mem::load(word addr, Mode mode) {
         tmp.uw = data[taddr.udw];
         word zero;
         for(auto p : peripherals) {
-            if(p->inRange(taddr)) // Makes no assumption on consistency/coherency
+            if(p->inRange(taddr) && !(p->doesDirty())) // Makes no assumption on consistency/coherency
                 tmp = p->map(taddr, zero);
         }
     } catch(char const* ex){
@@ -103,7 +103,7 @@ void Mem::store(word newData, word addr, Mode mode) {
         word taddr = translate(addr, mode);
         data[taddr.udw] = newData.uw;
         for(auto p : peripherals) {
-            if(p->inRange(taddr)) // Makes no assumption on consistency/coherency
+            if(p->inRange(taddr) && p->doesDirty()) // Makes no assumption on consistency/coherency
                 p->map(taddr, newData);
         }
     } catch(char const *ex){

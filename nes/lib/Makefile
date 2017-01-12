@@ -5,7 +5,7 @@ INCLUDES = -I./headers
 CXXFLAGS = -std=c++11 -g -Wall
 
 LDFLAGS = -g
-LDLIBS  = -l6502
+LDLIBS  = 
 
 TARGET = lib6502nes.a
 SRC = $(wildcard *.cpp)
