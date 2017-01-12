@@ -2,6 +2,6 @@
 
 word Reader::map(word addr, word data) {
     word tmp;
-    // tmp.udw = readCallBack(addr.udw);
+    tmp.udw = callback(addr.udw);
     return tmp;
 }

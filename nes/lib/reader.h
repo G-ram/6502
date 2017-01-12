@@ -2,14 +2,17 @@
 #define READER_H
 #include "headers/peripheral.h"
 
-extern unsigned short readCallBack(unsigned short);
+typedef unsigned char (*reader_callback) (unsigned short);
 
 class Reader : public Peripheral {
+private:
+    reader_callback callback;
 public:
-    Reader(word _lo, word _hi) {
-        hi = _hi;
-        lo = _lo;
-    };
+    Reader(word _lo, word _hi, reader_callback callback) :
+        callback(callback) {
+            hi = _hi;
+            lo = _lo;
+        };
     void exec(Mem *) {};
     bool inRange(word addr) {
         if(addr.udw >= lo.udw && addr.udw <= hi.udw)

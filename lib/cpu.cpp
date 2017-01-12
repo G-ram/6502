@@ -2,6 +2,7 @@
 #include "headers/log.h"
 
 CPU::CPU(word PC, word SP) : cycles(0) {
+    reg = new Reg();
     reg->PC = PC;
     reg->S = SP;
     mem = new Mem(reg);

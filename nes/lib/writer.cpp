@@ -2,6 +2,6 @@
 
 word Writer::map(word addr, word data) {
     word tmp;
-    // writeCallBack(addr.udw, data.uw);
+    callback(addr.udw, data.uw);
     return tmp;
 }
