@@ -13,14 +13,14 @@ public:
             hi = _hi;
             lo = _lo;
         };
-    void exec(Mem *) {};
-    bool inRange(word addr) {
+    virtual void exec(Mem *) {};
+    virtual bool inRange(word addr) {
         if(addr.udw >= lo.udw && addr.udw <= hi.udw)
             return true;
         return false;
     };
-    bool doesDirty() { return false; }
-    word map(word, word);
+    virtual bool doesDirty() { return false; }
+    virtual word map(word, word);
 };
 
 #endif

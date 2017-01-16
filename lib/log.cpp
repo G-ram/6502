@@ -31,7 +31,7 @@ std::string hexify(const unsigned char& input) {
 
 std::string hexify(const unsigned short& input) {
     std::stringstream stream;
-    stream << std::hex << input;
+    stream << std::uppercase << std::hex << input;
     return stream.str();
 }
 

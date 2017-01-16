@@ -651,7 +651,7 @@ func (p *PPU) read(address uint16) byte {
 
 func (p *PPU) write(address uint16, value byte) {
 	address = p.mapAddress(address)
-	
+
 	switch {
 	case address < 0x2000:
 		p.Console.Cart.Write(address, value, true)

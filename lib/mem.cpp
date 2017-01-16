@@ -17,9 +17,7 @@ word Mem::translate(word addr, Mode mode) {
             tmp.uw = addr.uw;
             break;
         case IND_ABS:
-            tmp.upart.lo = load(addr, ABS).uw;
-            addr.udw++;
-            tmp.upart.hi = load(addr, ABS).uw;
+            tmp = read16WithPageBoundaryBug(addr);
             break;
         case ABSX:
             tmp.udw = addr.udw + reg->X.udw;
@@ -41,18 +39,14 @@ word Mem::translate(word addr, Mode mode) {
         {
             word a;
             a.uw = reg->X.uw + addr.uw;
-            tmp.upart.lo = load(a, ABS).uw;
-            a.uw++;
-            tmp.upart.hi = load(a, ABS).uw;
+            tmp = read16WithPageBoundaryBug(a);
             break;
         }
         case IND_IDX:
         {
             word a;
             addr.upart.hi = 0;
-            a.upart.lo = load(addr, ABS).uw;
-            addr.uw++;
-            a.upart.hi = load(addr, ABS).uw;
+            a = read16WithPageBoundaryBug(addr);
             tmp.dw = a.udw + reg->Y.udw;
             if(!pagesEqual(tmp, a)) // Page boundary
                 cycles++;
@@ -81,8 +75,9 @@ word Mem::load(word addr, Mode mode) {
         tmp.uw = data[taddr.udw];
         word zero;
         for(auto p : peripherals) {
-            if(p->inRange(taddr) && !(p->doesDirty())) // Makes no assumption on consistency/coherency
+            if(p->inRange(taddr) && !(p->doesDirty())) { // Makes no assumption on consistency/coherency
                 tmp = p->map(taddr, zero);
+            }
         }
     } catch(char const* ex){
         switch(mode){
@@ -101,6 +96,9 @@ word Mem::load(word addr, Mode mode) {
 void Mem::store(word newData, word addr, Mode mode) {
     try {
         word taddr = translate(addr, mode);
+        if(taddr.udw == 0x1F9){
+            LOG("HERE BREAK " << modeName[mode] << " " << hexify(newData.uw) << " " << hexify(reg->PC.udw));
+        }
         data[taddr.udw] = newData.uw;
         for(auto p : peripherals) {
             if(p->inRange(taddr) && p->doesDirty()) // Makes no assumption on consistency/coherency
@@ -111,14 +109,42 @@ void Mem::store(word newData, word addr, Mode mode) {
     }
 }
 
-void Mem::push(word newData) {
-    store(newData, reg->S, ABS);
-    reg->S.uw += 1;
+void Mem::push8(word newData) {
+    word addr;
+    addr.udw = stackBase.udw + reg->S.udw;
+    store(newData, addr, ABS);
+    reg->S.udw -= 1;
 }
 
-word Mem::pop() {
-    reg->S.uw -= 1;
-    word tmp = load(reg->S, ABS);
+word Mem::pop8() {
+    word addr;
+    LOG(hexify(stackBase.udw));
+    addr.udw = stackBase.udw + reg->S.udw + 1;
+    word tmp = load(addr, ABS);
+    reg->S.udw += 1;
+    return tmp;
+}
+
+void Mem::push16(word newData) {
+    word addr;
+    word hi, lo;
+    lo.udw = newData.udw & 0xff;
+    hi.udw = newData.udw >> 8;
+    addr.udw = stackBase.udw + reg->S.udw - 1;
+    store(lo, addr, ABS);
+    addr.udw += 1;
+    store(hi, addr, ABS);
+    reg->S.uw -= 2;
+}
+
+word Mem::pop16() {
+    word addr;
+    addr.udw = stackBase.udw + reg->S.udw + 1;
+    word tmp = load(addr, ABS);
+    tmp.upart.lo = load(addr, ABS).uw;
+    addr.udw += 1;
+    tmp.upart.hi = load(addr, ABS).uw;
+    reg->S.uw += 2;
     return tmp;
 }
 
@@ -140,4 +166,16 @@ std::string Mem::dump() {
 
 bool Mem::pagesEqual(word addrA, word addrB) {
     return (addrA.udw & 0xFF00) == (addrB.udw & 0xFF00);
+}
+
+word Mem::read16WithPageBoundaryBug(word addr) {
+    word lo, hi, tmp;
+    lo.udw = addr.udw;
+    if((addr.udw & 0xff) == 0xff) {
+        hi.udw = addr.udw & 0xff00;
+    } else {
+        hi.udw = addr.udw + 1;
+    }
+	tmp.udw = load(lo, ABS).udw | load(hi, ABS).udw << 8;
+	return tmp;
 }

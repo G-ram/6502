@@ -4,11 +4,16 @@
 #include "reader.h"
 #include "writer.h"
 
-CPU_p getCPU(unsigned short _PC, unsigned short _SP) {
-    word PC, SP;
+CPU_p getCPU(unsigned short _PC, unsigned short _SP,
+            unsigned short _stackBase, unsigned short _interruptVector,
+            unsigned short _nmiVector) {
+    word PC, SP, stackBase, interruptVector, nmiVector;
     PC.udw = _PC;
     SP.udw = _SP;
-    return (void *)(new CPU(PC, SP));
+    interruptVector.udw = _interruptVector;
+    nmiVector.udw = _nmiVector;
+    stackBase.udw = _stackBase;
+    return (void *)(new CPU(PC, SP, stackBase, interruptVector, nmiVector));
 }
 
 void freeCPU(CPU_p _cpu) {
@@ -17,7 +22,6 @@ void freeCPU(CPU_p _cpu) {
 }
 
 void addReader(CPU_p _cpu, unsigned short _lo, unsigned short _hi, reader_callback callback) {
-    LOG("READER");
     CPU *cpu = (CPU* )_cpu;
     word lo, hi;
     lo.udw = _lo;
@@ -27,7 +31,6 @@ void addReader(CPU_p _cpu, unsigned short _lo, unsigned short _hi, reader_callba
 }
 
 void addWriter(CPU_p _cpu, unsigned short _lo, unsigned short _hi, writer_callback callback) {
-    LOG("WRITER");
     CPU *cpu = (CPU* )_cpu;
     word lo, hi;
     lo.udw = _lo;
@@ -36,8 +39,19 @@ void addWriter(CPU_p _cpu, unsigned short _lo, unsigned short _hi, writer_callba
     cpu->mem->connect(writer);
 }
 
+void NMI(CPU_p _cpu) {
+    CPU *cpu = (CPU* )_cpu;
+    cpu->NMI();
+}
+
+unsigned char read(CPU_p _cpu, unsigned short _addr) {
+    CPU *cpu = (CPU* )_cpu;
+    word addr;
+    addr.udw = _addr;
+    return cpu->mem->load(addr, ABS).uw;
+}
+
 void step(CPU_p _cpu) {
-    LOG("STEP");
     CPU *cpu = (CPU* )_cpu;
     cpu->step();
 }

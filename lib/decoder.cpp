@@ -88,7 +88,7 @@ Decoder::Instruct Decoder::decode() {
                     }
                     return Decoder::Instruct(maskName0[a], maskOp0[a], maskMode0[b], zero, baseCycles, pageCycles);
                 default:
-                    LOG(binify(raw.uw));
+                    GLOG("PC: " << hexify(reg->PC.udw) << " " << binify(raw.uw));
                     throw "Not a valid Decoder::Instruction";
             }
         }

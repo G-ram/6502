@@ -10,6 +10,7 @@ const framesPerSecond = 60
 
 // Global console
 var c *Console
+var extraCycles uint64
 
 // Console represents a NES console and its main hardware components (the
 // cartridge, CPU, PPU, and joypads).
@@ -55,7 +56,7 @@ func (c *Console) Step() (*image.RGBA, error) {
 	var ppuCycles uint64
 
 	c.CPU.step()
-	cpuCycles = c.CPU.getCycles()
+	cpuCycles = c.CPU.getCycles() + extraCycles
 
 	for ppuCycles < cpuCycles * 3 {
 		var image *image.RGBA

@@ -10,13 +10,16 @@ class CPU {
 public:
     Mem *mem;
 private:
+    word interruptVector;
+    word nmiVector;
     unsigned long long cycles;
     Reg *reg;
     Decoder *decoder;
 public:
-    CPU(word, word);
+    CPU(word, word, word, word, word);
     void step();
     unsigned long long getCycles() { return cycles; };
+    void NMI();
     ~CPU();
 };
 

@@ -148,51 +148,51 @@ void DEY(word addr, Mode mode, Mem *mem, Reg *reg) {
 
 void CMP(word addr, Mode mode, Mem *mem, Reg *reg) {
     word tmp = mem->load(addr, mode);
-    if(reg->A.w < tmp.w) {
+    reg->unsetStatus(N);
+    reg->unsetStatus(Z);
+    reg->unsetStatus(C);
+    if(((reg->A.uw - tmp.uw) & 0x80) == 0x80) {
         reg->setStatus(N);
-        reg->unsetStatus(Z);
-        reg->unsetStatus(C);
-    } else if(reg->A.w == tmp.w) {
-        reg->unsetStatus(N);
+    }
+    if(reg->A.uw == tmp.uw) {
         reg->setStatus(Z);
-        reg->setStatus(C);
-    } else {
-        reg->unsetStatus(N);
-        reg->unsetStatus(Z);
+    }
+
+    if(reg->A.uw >= tmp.uw) {
         reg->setStatus(C);
     }
 }
 
 void CPX(word addr, Mode mode, Mem *mem, Reg *reg) {
     word tmp = mem->load(addr, mode);
-    if(reg->X.w < tmp.w) {
+    reg->unsetStatus(N);
+    reg->unsetStatus(Z);
+    reg->unsetStatus(C);
+    if(((reg->X.uw - tmp.uw) & 0x80) == 0x80) {
         reg->setStatus(N);
-        reg->unsetStatus(Z);
-        reg->unsetStatus(C);
-    } else if(reg->X.w == tmp.w) {
-        reg->unsetStatus(N);
+    }
+    if(reg->X.uw == tmp.uw) {
         reg->setStatus(Z);
-        reg->setStatus(C);
-    } else {
-        reg->unsetStatus(N);
-        reg->unsetStatus(Z);
+    }
+
+    if(reg->X.uw >= tmp.uw) {
         reg->setStatus(C);
     }
 }
 
 void CPY(word addr, Mode mode, Mem *mem, Reg *reg) {
     word tmp = mem->load(addr, mode);
-    if(reg->Y.w < tmp.w) {
+    reg->unsetStatus(N);
+    reg->unsetStatus(Z);
+    reg->unsetStatus(C);
+    if(((reg->Y.uw - tmp.uw) & 0x80) == 0x80) {
         reg->setStatus(N);
-        reg->unsetStatus(Z);
-        reg->unsetStatus(C);
-    } else if(reg->Y.w == tmp.w) {
-        reg->unsetStatus(N);
+    }
+    if(reg->Y.uw == tmp.uw) {
         reg->setStatus(Z);
-        reg->setStatus(C);
-    } else {
-        reg->unsetStatus(N);
-        reg->unsetStatus(Z);
+    }
+
+    if(reg->Y.uw >= tmp.uw) {
         reg->setStatus(C);
     }
 }
@@ -222,7 +222,6 @@ void ASL(word addr, Mode mode, Mem *mem, Reg *reg) {
     try {
         tmp = mem->load(addr, mode);
     } catch(Mode m) {
-        LOG("HERE");
         if(m != ACC)
             throw "Invalid Instruction";
 
@@ -357,20 +356,21 @@ void TXS(word addr, Mode mode, Mem *mem, Reg *reg) {
 }
 
 void PHA(word addr, Mode mode, Mem *mem, Reg *reg) {
-    mem->push(reg->A);
+    mem->push8(reg->A);
 }
 
 void PHP(word addr, Mode mode, Mem *mem, Reg *reg) {
-    mem->push(reg->P);
+    mem->push8(reg->P);
 }
 
 void PLA(word addr, Mode mode, Mem *mem, Reg *reg) {
-    LOG("HERE");
-    reg->A = mem->pop();
+    reg->A = mem->pop8();
+    wrapup(reg->A, reg);
 }
 
 void PLP(word addr, Mode mode, Mem *mem, Reg *reg) {
-    reg->P = mem->pop();
+    reg->P = mem->pop8();
+    wrapup(reg->P, reg);
 }
 
 void CLC(word addr, Mode mode, Mem *mem, Reg *reg) {
@@ -417,19 +417,31 @@ void JMP(word addr, Mode mode, Mem *mem, Reg *reg) {
 
 void BCC(word addr, Mode mode, Mem *mem, Reg *reg) {
     if(!reg->getStatus(C)) {
-        reg->PC = mem->translate(addr, mode);
+        mem->cycles++; // Hack to make branches work
+        word tmp = mem->translate(addr, mode);
+        if(!mem->pagesEqual(tmp, reg->PC))
+            mem->cycles++;
+        reg->PC = tmp;
     }
 }
 
 void BCS(word addr, Mode mode, Mem *mem, Reg *reg) {
     if(reg->getStatus(C)) {
-        reg->PC = mem->translate(addr, mode);
+        mem->cycles++; // Hack to make branches work
+        word tmp = mem->translate(addr, mode);
+        if(!mem->pagesEqual(tmp, reg->PC))
+            mem->cycles++;
+        reg->PC = tmp;
     }
 }
 
 void BEQ(word addr, Mode mode, Mem *mem, Reg *reg) {
     if(reg->getStatus(Z)) {
-        reg->PC = mem->translate(addr, mode);
+        mem->cycles++; // Hack to make branches work
+        word tmp = mem->translate(addr, mode);
+        if(!mem->pagesEqual(tmp, reg->PC))
+            mem->cycles++;
+        reg->PC = tmp;
     }
 }
 
@@ -484,21 +496,18 @@ void BVC(word addr, Mode mode, Mem *mem, Reg *reg) {
 }
 
 void JSR(word addr, Mode mode, Mem *mem, Reg *reg) {
-    word lo, hi;
-    lo.uw = reg->PC.upart.lo;
-    hi.uw = reg->PC.upart.hi;
-    mem->push(lo);
-    mem->push(hi);
+    // Respondsible for pushing the 23 onto the stack
+    reg->PC.udw -= 1;
+    mem->push16(reg->PC);
     reg->PC = mem->translate(addr, mode);
 }
 
 void RTS(word addr, Mode mode, Mem *mem, Reg *reg) {
-    word hi = mem->pop();
-    word lo = mem->pop();
-    reg->PC.upart.lo = lo.uw;
-    reg->PC.upart.hi = hi.uw;
+    reg->PC = mem->pop16();
+    reg->PC.udw += 1;
 }
 
 void RTI(word addr, Mode mode, Mem *mem, Reg *reg) {
-    RTS(addr, mode, mem, reg);
+    PLP(addr, mode, mem, reg);
+    reg->PC = mem->pop16();
 }
