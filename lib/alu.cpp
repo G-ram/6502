@@ -12,17 +12,17 @@ void wrapup(word operand, Reg *reg) {
 }
 
 void ORA(word addr, Mode mode, Mem *mem, Reg *reg) {
-    reg->A.w |= mem->load(addr, mode).w;
+    reg->A.uw |= mem->load(addr, mode).uw;
     wrapup(reg->A, reg);
 }
 
 void AND(word addr, Mode mode, Mem *mem, Reg *reg) {
-    reg->A.w &= mem->load(addr, mode).w;
+    reg->A.uw &= mem->load(addr, mode).uw;
     wrapup(reg->A, reg);
 }
 
 void EOR(word addr, Mode mode, Mem *mem, Reg *reg) {
-    reg->A.w ^= mem->load(addr, mode).w;
+    reg->A.uw ^= mem->load(addr, mode).uw;
     wrapup(reg->A, reg);
 }
 
@@ -85,64 +85,70 @@ void SBC(word addr, Mode mode, Mem *mem, Reg *reg) { //Subtract
 
 void STA(word addr, Mode mode, Mem *mem, Reg *reg) {
     mem->store(reg->A, addr, mode);
+    if((mode == ABSY || mode == ABSX || mode == IND_IDX) && mem->cycles > 0)
+        mem->cycles--;
 }
 
 void STX(word addr, Mode mode, Mem *mem, Reg *reg) {
     mem->store(reg->X, addr, mode);
+    if((mode == ABSY || mode == ABSX || mode == IND_IDX) && mem->cycles > 0)
+        mem->cycles--;
 }
 
 void STY(word addr, Mode mode, Mem *mem, Reg *reg) {
     mem->store(reg->Y, addr, mode);
+    if((mode == ABSY || mode == ABSX || mode == IND_IDX) && mem->cycles > 0)
+        mem->cycles--;
 }
 
 void LDA(word addr, Mode mode, Mem *mem, Reg *reg) {
-    reg->A.w = mem->load(addr, mode).w;
+    reg->A = mem->load(addr, mode);
     wrapup(reg->A, reg);
 }
 
 void LDX(word addr, Mode mode, Mem *mem, Reg *reg) {
-    reg->X.w = mem->load(addr, mode).w;
+    reg->X = mem->load(addr, mode);
     wrapup(reg->X, reg);
 }
 
 void LDY(word addr, Mode mode, Mem *mem, Reg *reg) {
-    reg->Y.w = mem->load(addr, mode).w;
+    reg->Y = mem->load(addr, mode);
     wrapup(reg->Y, reg);
 }
 
 void INC(word addr, Mode mode, Mem *mem, Reg *reg) {
     word tmp = mem->load(addr, mode);
-    tmp.w++;
+    tmp.uw++;
     mem->store(tmp, addr, mode);
 
     wrapup(tmp, reg);
 }
 
 void INX(word addr, Mode mode, Mem *mem, Reg *reg) {
-    reg->X.w++;
+    reg->X.uw++;
     wrapup(reg->X, reg);
 }
 
 void INY(word addr, Mode mode, Mem *mem, Reg *reg) {
-    reg->Y.w++;
+    reg->Y.uw++;
     wrapup(reg->Y, reg);
 }
 
 void DEC(word addr, Mode mode, Mem *mem, Reg *reg) {
     word tmp = mem->load(addr, mode);
-    tmp.w--;
+    tmp.uw--;
     mem->store(tmp, addr, mode);
 
     wrapup(tmp, reg);
 }
 
 void DEX(word addr, Mode mode, Mem *mem, Reg *reg) {
-    reg->X.w--;
+    reg->X.uw--;
     wrapup(reg->X, reg);
 }
 
 void DEY(word addr, Mode mode, Mem *mem, Reg *reg) {
-    reg->Y.w--;
+    reg->Y.uw--;
     wrapup(reg->Y, reg);
 }
 
@@ -212,7 +218,7 @@ void BIT(word addr, Mode mode, Mem *mem, Reg *reg) {
         reg->unsetStatus(V);
     }
 
-    tmp.w &= reg->A.w;
+    tmp.uw &= reg->A.uw;
     if(tmp.uw == 0)
         reg->setStatus(Z);
 }
@@ -227,15 +233,15 @@ void ASL(word addr, Mode mode, Mem *mem, Reg *reg) {
 
         tmp = reg->A;
     }
-    if(GET_BIT(tmp.w, 7)) {
+    if(GET_BIT(tmp.uw, 7)) {
         reg->setStatus(C);
     } else {
         reg->unsetStatus(C);
     }
 
-    tmp.w <<= 1;
+    tmp.uw <<= 1;
     if(mode == ACC) {
-        reg->A.w = tmp.w;
+        reg->A.uw = tmp.uw;
     } else {
         mem->store(tmp, addr, mode);
     }
@@ -253,15 +259,15 @@ void LSR(word addr, Mode mode, Mem *mem, Reg *reg) {
 
         tmp = reg->A;
     }
-    if(GET_BIT(tmp.w, 0)) {
+    if(GET_BIT(tmp.uw, 0)) {
         reg->setStatus(C);
     } else {
         reg->unsetStatus(C);
     }
 
-    tmp.w >>= 1;
+    tmp.uw >>= 1;
     if(mode == ACC) {
-        reg->A.w = tmp.w;
+        reg->A.uw = tmp.uw;
     } else {
         mem->store(tmp, addr, mode);
     }
@@ -285,10 +291,10 @@ void ROL(word addr, Mode mode, Mem *mem, Reg *reg) {
         } else {
             reg->unsetStatus(C);
         }
-        tmp.w <<= 1;
-        tmp.w |= 1;
+        tmp.uw <<= 1;
+        tmp.uw |= 1;
         if(mode == ACC) {
-            reg->A.w = tmp.w;
+            reg->A.uw = tmp.uw;
         } else {
             mem->store(tmp, addr, mode);
         }
@@ -314,10 +320,10 @@ void ROR(word addr, Mode mode, Mem *mem, Reg *reg) {
         } else {
             reg->unsetStatus(C);
         }
-        tmp.w >>= 1;
-        tmp.w |= 128;
+        tmp.uw >>= 1;
+        tmp.uw |= 128;
         if(mode == ACC) {
-            reg->A.w = tmp.w;
+            reg->A.uw = tmp.uw;
         } else {
             mem->store(tmp, addr, mode);
         }

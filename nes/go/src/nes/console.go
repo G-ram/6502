@@ -3,6 +3,8 @@ package nes
 import (
 	"image"
 	"time"
+	"fmt"
+	"os"
 )
 
 // Number of video frames per second.
@@ -57,6 +59,7 @@ func (c *Console) Step() (*image.RGBA, error) {
 
 	c.CPU.step()
 	cpuCycles = c.CPU.getCycles() + extraCycles
+	fmt.Fprintln(os.Stderr, " Cycles=", cpuCycles)
 
 	for ppuCycles < cpuCycles * 3 {
 		var image *image.RGBA

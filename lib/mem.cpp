@@ -72,12 +72,18 @@ word Mem::load(word addr, Mode mode) {
     word tmp;
     try {
         word taddr = translate(addr, mode);
+        // if(reg->PC.udw == 0x8020){
+        //     GLOG("READ BREAK " << modeName[mode] << " " << hexify(taddr.udw) << " " << hexify(reg->PC.udw));
+        // }
         tmp.uw = data[taddr.udw];
         word zero;
         for(auto p : peripherals) {
             if(p->inRange(taddr) && !(p->doesDirty())) { // Makes no assumption on consistency/coherency
                 tmp = p->map(taddr, zero);
             }
+            // if(reg->PC.udw == 0x8020){
+            //     GLOG(hexify(tmp.uw));
+            // }
         }
     } catch(char const* ex){
         switch(mode){
@@ -96,9 +102,9 @@ word Mem::load(word addr, Mode mode) {
 void Mem::store(word newData, word addr, Mode mode) {
     try {
         word taddr = translate(addr, mode);
-        if(taddr.udw == 0x1F9){
-            LOG("HERE BREAK " << modeName[mode] << " " << hexify(newData.uw) << " " << hexify(reg->PC.udw));
-        }
+        // if(taddr.udw == 0x8000){
+        //     GLOG("STORE BREAK " << modeName[mode] << " " << hexify(newData.uw) << " " << hexify(reg->PC.udw));
+        // }
         data[taddr.udw] = newData.uw;
         for(auto p : peripherals) {
             if(p->inRange(taddr) && p->doesDirty()) // Makes no assumption on consistency/coherency
@@ -118,7 +124,6 @@ void Mem::push8(word newData) {
 
 word Mem::pop8() {
     word addr;
-    LOG(hexify(stackBase.udw));
     addr.udw = stackBase.udw + reg->S.udw + 1;
     word tmp = load(addr, ABS);
     reg->S.udw += 1;

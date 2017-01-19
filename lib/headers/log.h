@@ -14,6 +14,9 @@
 #define GLOG(msg) \
     std::cerr << msg << std::endl
 
+#define GNLOG(msg) \
+    std::cerr << msg
+
 std::string hexify(const std::string&);
 std::string hexify(const unsigned char& input);
 std::string hexify(const unsigned short& input);
