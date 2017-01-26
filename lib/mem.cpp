@@ -22,20 +22,21 @@ word Mem::translate(word addr, Mode mode) {
             tmp = read16WithPageBoundaryBug(addr);
             break;
         case ABSX:
-            tmp.udw = addr.udw + reg->X.udw;
+            tmp.udw = addr.udw + reg->X.uw;
             if(!pagesEqual(tmp, addr)) // Page boundary
                 cycles++;
             break;
         case ABSY:
-            tmp.udw = addr.udw + reg->Y.udw;
-            if(!pagesEqual(tmp, addr)) // Page boundary
+            tmp.udw = addr.udw + reg->Y.uw;
+            if(!pagesEqual(tmp, addr)){ // Page boundary
                 cycles++;
+            }
             break;
         case ZEROX:
             tmp.udw = addr.uw + reg->X.uw;
             break;
         case ZEROY:
-            tmp.udw = addr.uw + reg->Y.udw;
+            tmp.udw = addr.uw + reg->Y.uw;
             break;
         case IDX_IND:
         {
@@ -49,7 +50,7 @@ word Mem::translate(word addr, Mode mode) {
             word a;
             addr.upart.hi = 0;
             a = read16WithPageBoundaryBug(addr);
-            tmp.dw = a.udw + reg->Y.udw;
+            tmp.dw = a.udw + reg->Y.uw;
             if(!pagesEqual(tmp, a)) // Page boundary
                 cycles++;
             break;

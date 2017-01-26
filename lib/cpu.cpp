@@ -19,15 +19,15 @@ CPU::CPU(word PC, word SP, word stackBase, word _interruptVector, word _nmiVecto
 
 void CPU::step() {
     try {
-        word tmpPC = reg->PC;
+        // word tmpPC = reg->PC;
         Decoder::Instruct cur = decoder->decode();
         // GLOG("PC: " << hexify(tmpPC.udw) << " SP: " << hexify(reg->S.uw) << " : " << cur << " Cycles: " << cycles);
-        GLOG("PC=" << hexify(tmpPC.udw) << " A=" << hexify(reg->A.uw) <<
-            " X=" << hexify(reg->X.uw) << " Y=" << hexify(reg->Y.uw) << " P=" << hexify(reg->P.uw) <<
-            " SP=" << hexify(reg->S.uw) << ", ins=" << 0 << ", C=" << reg->getStatus(C) <<
-            " Z=" << reg->getStatus(Z) << " I=" << reg->getStatus(I) <<  " D=" << reg->getStatus(D) <<
-            " B=" << reg->getStatus(B) << " O=" << reg->getStatus(V) <<  " S=" << reg->getStatus(N) <<
-            " OP= " << cur.name);
+        // GNLOG("PC=" << hexify(tmpPC.udw) << " A=" << hexify(reg->A.uw) <<
+        //     " X=" << hexify(reg->X.uw) << " Y=" << hexify(reg->Y.uw) << " P=" << hexify(reg->P.uw) <<
+        //     " SP=" << hexify(reg->S.uw) << ", ins=" << 0 << ", C=" << reg->getStatus(C) <<
+        //     " Z=" << reg->getStatus(Z) << " I=" << reg->getStatus(I) <<  " D=" << reg->getStatus(D) <<
+        //     " B=" << reg->getStatus(B) << " O=" << reg->getStatus(V) <<  " S=" << reg->getStatus(N) <<
+        //     " OP=" << cur.name);
         // word addr, tmp;
         // addr.udw = 0x87FE;
         // tmp = mem->load(addr, ABS);
@@ -61,6 +61,12 @@ void CPU::step() {
         //     " Z=" << reg->getStatus(Z) << " I=" << reg->getStatus(I) <<  " D=" << reg->getStatus(D) <<
         //     " B=" << reg->getStatus(B) << " O=" << reg->getStatus(V) <<  " S=" << reg->getStatus(N) <<
         //     " OP=" << cur << " Location: " << hexify(tmp.udw));
+        // GNLOG("PC=" << hexify(tmpPC.udw) << " A=" << hexify(reg->A.uw) <<
+        //     " X=" << hexify(reg->X.uw) << " Y=" << hexify(reg->Y.uw) << " P=" << hexify(reg->P.uw) <<
+        //     " SP=" << hexify(reg->S.uw) << ", ins=" << 0 << ", C=" << reg->getStatus(C) <<
+        //     " Z=" << reg->getStatus(Z) << " I=" << reg->getStatus(I) <<  " D=" << reg->getStatus(D) <<
+        //     " B=" << reg->getStatus(B) << " O=" << reg->getStatus(V) <<  " S=" << reg->getStatus(N) <<
+        //     " OP=" << cur);
         cur.op(cur.addr, cur.mode, mem, reg);
         cycles += cur.cycles;
         cycles += mem->cycles;
