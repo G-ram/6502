@@ -116,7 +116,7 @@ func (m *Mapper1) Write(address uint16, value byte, isPPU bool) {
 				m.shiftRegister |= (value & 1) << 4
 
 				if m.shiftRegisterCount == 5 {
-					switch address & 0xE000 {
+					switch address & 0xE000 { // Problem HERE!
 					case 0x8000:
 						switch m.shiftRegister & 0x3 {
 						case 0:

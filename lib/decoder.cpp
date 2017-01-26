@@ -66,13 +66,13 @@ Decoder::Instruct Decoder::decode() {
                     }
                 case 2:
                     if(maskRaw2[b] == 2) {
+                        if(maskOp2[a] == LDX && maskMode2[b] == ABSX)
+                            return Decoder::Instruct(maskName2[a], maskOp2[a], ABSY, next2Bytes(), baseCycles, pageCycles);
+
                         return Decoder::Instruct(maskName2[a], maskOp2[a], maskMode2[b], next2Bytes(), baseCycles, pageCycles);
                     } else if(maskRaw2[b] == 1){
                         if((maskOp2[a] == STX || maskOp2[a] == LDX) && maskMode2[b] == ZEROX)
                             return Decoder::Instruct(maskName2[a], maskOp2[a], ZEROY, nextByte(), baseCycles, pageCycles);
-
-                        if(maskOp2[a] == LDX && maskMode2[b] == ABSX)
-                            return Decoder::Instruct(maskName2[a], maskOp2[a], ABSY, nextByte(), baseCycles, pageCycles);
 
                         return Decoder::Instruct(maskName2[a], maskOp2[a], maskMode2[b], nextByte(), baseCycles, pageCycles);
                     }

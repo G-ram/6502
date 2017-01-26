@@ -128,7 +128,7 @@ func ReadCartridge(file io.Reader) (*Cartridge, error) {
 			return nil, err
 		}
 	}
-	
+
 	numCHRBanks := int(header.NumCHRBanks)
 	for i := range cart.PRG {
 		n, err := io.ReadFull(file, cart.PRG[i])

@@ -355,6 +355,7 @@ void TYA(word addr, Mode mode, Mem *mem, Reg *reg) {
 
 void TSX(word addr, Mode mode, Mem *mem, Reg *reg) {
     reg->X = reg->S;
+    wrapup(reg->X, reg);
 }
 
 void TXS(word addr, Mode mode, Mem *mem, Reg *reg) {
@@ -376,7 +377,6 @@ void PLA(word addr, Mode mode, Mem *mem, Reg *reg) {
 
 void PLP(word addr, Mode mode, Mem *mem, Reg *reg) {
     reg->P = mem->pop8();
-    wrapup(reg->P, reg);
 }
 
 void CLC(word addr, Mode mode, Mem *mem, Reg *reg) {
@@ -502,7 +502,6 @@ void BVC(word addr, Mode mode, Mem *mem, Reg *reg) {
 }
 
 void JSR(word addr, Mode mode, Mem *mem, Reg *reg) {
-    // Respondsible for pushing the 23 onto the stack
     reg->PC.udw -= 1;
     mem->push16(reg->PC);
     reg->PC = mem->translate(addr, mode);
